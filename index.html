@@ -3,164 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XuBi Fashion Store - Pro</title>
+    <title>XuBi Fashion Store - Final Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #2196F3; --bg: #f5f5f5; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
-        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        :root { --primary: #2196F3; --success: #4CAF50; --bg: #f8f9fa; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #e9ecef; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 450px; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; }
         
-        /* Header & Auth */
-        header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 10; }
-        .auth-buttons button { border: none; background: none; color: var(--primary); cursor: pointer; font-weight: bold; }
+        /* Header */
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); margin: 0; }
+        .user-info { font-size: 13px; color: #666; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
-        /* Product Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .card { border: 1px solid #eee; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .card img { width: 100%; height: 150px; object-fit: cover; }
-        .info { padding: 10px; flex-grow: 1; }
-        .price { color: var(--primary); font-weight: bold; }
-        .add-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+        /* Products */
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .product-card { border: 1px solid #f0f0f0; border-radius: 12px; overflow: hidden; background: white; transition: 0.3s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .product-card img { width: 100%; height: 160px; object-fit: cover; }
+        .p-info { padding: 12px; flex-grow: 1; }
+        .p-name { font-size: 14px; font-weight: 600; margin-bottom: 8px; height: 40px; overflow: hidden; }
+        .p-price { color: var(--primary); font-weight: bold; font-size: 16px; }
+        .add-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+        .add-btn:active { transform: scale(0.95); }
 
-        /* Modal Giỏ hàng & Login */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
-        .cart-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 85%; max-width: 350px; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        /* Form Đăng nhập */
         .form-group { margin-bottom: 15px; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .primary-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
+        .form-group input:focus { border-color: var(--primary); }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-login { background: var(--primary); color: white; }
+        .btn-reg { background: var(--success); color: white; }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .cart-empty { text-align: center; color: #999; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <header>
-        <div class="auth-buttons">
-            <button onclick="openModal('loginModal')" id="userDisplay"><i class="fa-user fa"></i> Đăng nhập</button>
+        <div class="user-info" id="userArea" onclick="openModal('authModal')">
+            <i class="fa-solid fa-circle-user fa-lg"></i>
+            <span id="userName">Đăng nhập</span>
         </div>
-        <h2 style="margin:0; color: #333;">XuBi</h2>
-        <div style="position:relative; cursor:pointer" onclick="openModal('cartModal')">
-            <i class="fa-shopping-bag fa-2x" style="color:#555"></i>
-            <span id="cart-count" style="position:absolute; top:-5px; right:-10px; background:red; color:white; border-radius:50%; padding:2px 6px; font-size:12px">0</span>
+        <h1 class="logo">XuBi</h1>
+        <div style="position: relative; cursor: pointer;" onclick="openModal('cartModal')">
+            <i class="fa-solid fa-bag-shopping fa-xl"></i>
+            <span id="cart-badge" style="position: absolute; top: -10px; right: -10px; background: #ff4757; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; display: none;">0</span>
         </div>
     </header>
 
-    <div class="grid" id="product-list">
+    <div class="product-grid" id="productGrid">
         </div>
 </div>
 
-<div id="loginModal" class="modal">
+<div id="authModal" class="modal">
     <div class="modal-content">
-        <h3>Đăng nhập / Đăng ký</h3>
-        <div class="form-group"><input type="email" id="email" placeholder="Email"></div>
+        <h2 style="margin-top:0; text-align:center">Thành viên XuBi</h2>
+        <div class="form-group"><input type="email" id="email" placeholder="Email của bạn"></div>
         <div class="form-group"><input type="password" id="password" placeholder="Mật khẩu"></div>
-        <button class="primary-btn" onclick="login()">Xác nhận</button>
-        <button onclick="closeModal('loginModal')" style="margin-top:10px; border:none; background:none; width:100%">Đóng</button>
+        <div class="btn-group">
+            <button class="btn btn-login" onclick="handleLogin()">Đăng nhập</button>
+            <button class="btn btn-reg" onclick="handleRegister()">Đăng ký</button>
+        </div>
+        <button onclick="closeModal('authModal')" style="width:100%; margin-top:15px; border:none; background:none; color:#999; cursor:pointer">Lúc khác</button>
+        <div id="logoutArea" style="display:none; margin-top:10px; text-align:center">
+            <hr><button onclick="handleLogout()" style="color:red; border:none; background:none; cursor:pointer">Đăng xuất</button>
+        </div>
     </div>
 </div>
 
 <div id="cartModal" class="modal">
     <div class="modal-content">
-        <h3>Giỏ hàng của bạn</h3>
-        <div id="cart-items"></div>
-        <hr>
-        <div style="display:flex; justify-content:space-between; font-weight:bold; margin: 15px 0;">
+        <h2 style="margin-top:0">Giỏ hàng</h2>
+        <div id="cartList"></div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px; margin:20px 0;">
             <span>Tổng cộng:</span>
-            <span id="total-price">0đ</span>
+            <span id="cartTotal" style="color:var(--primary)">0đ</span>
         </div>
-        <button class="primary-btn" onclick="checkout()">Thanh toán ngay</button>
-        <button onclick="closeModal('cartModal')" style="margin-top:10px; border:none; background:none; width:100%">Tiếp tục mua sắm</button>
+        <button class="btn btn-login" style="width:100%" onclick="handleCheckout()">Thanh toán ngay</button>
+        <button onclick="closeModal('cartModal')" style="width:100%; margin-top:15px; border:none; background:none; color:#999; cursor:pointer">Tiếp tục xem đồ</button>
     </div>
 </div>
 
 <script>
+    // 1. DATA
     const products = [
-        { id: 1, name: "Đồ bộ ngủ đũi bông mây", price: 70000, img: "https://via.placeholder.com/150" },
-        { id: 2, name: "Đầm lông vũ dáng dài", price: 129000, img: "https://via.placeholder.com/150" },
-        { id: 3, name: "Đầm Baby Doll", price: 89000, img: "https://via.placeholder.com/150" },
-        { id: 4, name: "Đầm Body len cao cấp", price: 105000, img: "https://via.placeholder.com/150" }
+        { id: 1, name: "Bộ ngủ đũi Bông Mây", price: 70000, img: "https://via.placeholder.com/200?text=Do+Ngu" },
+        { id: 2, name: "Đầm Lông Vũ dáng dài", price: 129000, img: "https://via.placeholder.com/200?text=Dam+Long+Vu" },
+        { id: 3, name: "Đầm Baby Doll xinh", price: 89000, img: "https://via.placeholder.com/200?text=Baby+Doll" },
+        { id: 4, name: "Đầm Body len cao cấp", price: 105000, img: "https://via.placeholder.com/200?text=Dam+Body" }
     ];
 
     let cart = JSON.parse(localStorage.getItem('xubi_cart')) || [];
+    let users = JSON.parse(localStorage.getItem('xubi_users')) || [];
+    let loggedInUser = localStorage.getItem('xubi_logged_in');
 
-    // Hiển thị sản phẩm
+    // 2. LOGIC AUTH
+    function handleRegister() {
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('password').value;
+        if(!e || !p) return alert("Vui lòng điền đủ thông tin!");
+        if(users.find(u => u.email === e)) return alert("Tài khoản này đã có rồi!");
+        
+        users.push({email: e, password: p});
+        localStorage.setItem('xubi_users', JSON.stringify(users));
+        alert("Đăng ký thành công! Mời bạn đăng nhập.");
+    }
+
+    function handleLogin() {
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('password').value;
+        const user = users.find(u => u.email === e && u.password === p);
+        
+        if(user) {
+            localStorage.setItem('xubi_logged_in', e);
+            alert("Chào mừng bạn quay lại XuBi!");
+            location.reload();
+        } else {
+            alert("Sai thông tin hoặc tài khoản chưa đăng ký!");
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('xubi_logged_in');
+        location.reload();
+    }
+
+    // 3. LOGIC SHOPPING
     function renderProducts() {
-        const html = products.map(p => `
-            <div class="card">
+        document.getElementById('productGrid').innerHTML = products.map(p => `
+            <div class="product-card">
                 <img src="${p.img}">
-                <div class="info">
-                    <div style="font-size:14px; height:40px">${p.name}</div>
-                    <div class="price">${p.price.toLocaleString()}đ</div>
-                    <button class="add-btn" onclick="addToCart(${p.id})">Thêm</button>
+                <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price.toLocaleString()}đ</div>
+                    <button class="add-btn" onclick="addToCart(${p.id})">Thêm vào giỏ</button>
                 </div>
             </div>
         `).join('');
-        document.getElementById('product-list').innerHTML = html;
     }
 
     function addToCart(id) {
-        const item = products.find(p => p.id === id);
-        cart.push(item);
-        updateCart();
+        const p = products.find(x => x.id === id);
+        cart.push(p);
+        updateUI();
     }
 
-    function updateCart() {
+    function updateUI() {
         localStorage.setItem('xubi_cart', JSON.stringify(cart));
-        document.getElementById('cart-count').innerText = cart.length;
-        renderCart();
+        const badge = document.getElementById('cart-badge');
+        badge.innerText = cart.length;
+        badge.style.display = cart.length > 0 ? 'block' : 'none';
+        
+        if(loggedInUser) {
+            document.getElementById('userName').innerText = loggedInUser.split('@')[0];
+            document.getElementById('logoutArea').style.display = 'block';
+        }
+        renderCartList();
     }
 
-    function renderCart() {
-        const cartDiv = document.getElementById('cart-items');
-        if (cart.length === 0) {
-            cartDiv.innerHTML = "<p>Giỏ hàng trống</p>";
+    function renderCartList() {
+        const list = document.getElementById('cartList');
+        if(cart.length === 0) {
+            list.innerHTML = '<div class="cart-empty">Giỏ hàng đang trống đó!</div>';
+        } else {
+            list.innerHTML = cart.map((item, idx) => `
+                <div class="cart-item">
+                    <span>${item.name}</span>
+                    <span style="font-weight:bold">${item.price.toLocaleString()}đ 
+                    <i class="fa-solid fa-trash" onclick="removeItem(${idx})" style="color:#ff4757; margin-left:10px; cursor:pointer"></i></span>
+                </div>
+            `).join('');
+        }
+        const total = cart.reduce((sum, i) => sum + i.price, 0);
+        document.getElementById('cartTotal').innerText = total.toLocaleString() + 'đ';
+    }
+
+    function removeItem(idx) {
+        cart.splice(idx, 1);
+        updateUI();
+    }
+
+    function handleCheckout() {
+        if(!loggedInUser) {
+            alert("Bạn cần Đăng nhập/Đăng ký để thanh toán nhé!");
+            closeModal('cartModal');
+            openModal('authModal');
             return;
         }
-        cartDiv.innerHTML = cart.map((item, index) => `
-            <div class="cart-item">
-                <span>${item.name}</span>
-                <span>${item.price.toLocaleString()}đ <i class="fa fa-trash" onclick="removeItem(${index})" style="color:red; cursor:pointer"></i></span>
-            </div>
-        `).join('');
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        document.getElementById('total-price').innerText = total.toLocaleString() + 'đ';
-    }
-
-    function removeItem(index) {
-        cart.splice(index, 1);
-        updateCart();
-    }
-
-    function login() {
-        const email = document.getElementById('email').value;
-        if(email) {
-            localStorage.setItem('user', email);
-            document.getElementById('userDisplay').innerHTML = `<i class="fa fa-user"></i> Chào, ${email.split('@')[0]}`;
-            closeModal('loginModal');
-        }
-    }
-
-    function checkout() {
-        if(!localStorage.getItem('user')) {
-            alert("Vui lòng đăng nhập để thanh toán!");
-            openModal('loginModal');
-            return;
-        }
-        alert("Cảm ơn bạn đã mua hàng! Đơn hàng đang được xử lý.");
-        cart = [];
-        updateCart();
-        closeModal('cartModal');
-    }
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    // Khởi tạo
-    renderProducts();
-    updateCart();
-</script>
-
-</body>
-</html>
+        alert("Thanh toán thành công! XuBi sẽ sớm giao hàng cho " + loggedInUser);
