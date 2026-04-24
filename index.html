@@ -3,215 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XuBi Fashion Store</title>
+    <title>XuBi Fashion Store - Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* CSS để giả lập giao diện Material của Flutter */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-        }
+        :root { --primary: #2196F3; --bg: #f5f5f5; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
+        .app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        
+        /* Header & Auth */
+        header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 10; }
+        .auth-buttons button { border: none; background: none; color: var(--primary); cursor: pointer; font-weight: bold; }
+        
+        /* Product Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .card { border: 1px solid #eee; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+        .card img { width: 100%; height: 150px; object-fit: cover; }
+        .info { padding: 10px; flex-grow: 1; }
+        .price { color: var(--primary); font-weight: bold; }
+        .add-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
 
-        /* Khung chứa app, giả lập màn hình điện thoại */
-        .app-container {
-            width: 100%;
-            max-width: 450px; /* Độ rộng tối đa để trông giống app mobile trên PC */
-            background-color: white;
-            min-height: 100vh;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* AppBar */
-        header {
-            background-color: white;
-            color: #333;
-            padding: 15px 20px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .cart-icon {
-            font-size: 24px;
-            color: #555;
-            position: relative;
-        }
-
-        /* Badge thông báo số lượng trong giỏ */
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            background-color: #2196F3;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        /* Lưới sản phẩm (GridView) */
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 cột */
-            gap: 15px;
-            padding: 15px;
-            flex-grow: 1;
-        }
-
-        /* Card sản phẩm */
-        .product-card {
-            background-color: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            transition: transform 0.2s;
-            border: 1px solid #f0f0f0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 180px; /* Chiều cao cố định cho ảnh */
-            object-fit: cover; /* Cắt ảnh cho vừa khung */
-        }
-
-        .product-info {
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            flex-grow: 1;
-        }
-
-        .product-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 6px;
-            height: 38px; /* Giới hạn 2 dòng */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-
-        .product-price {
-            color: #2196F3; /* Màu xanh giống Flutter theme */
-            font-weight: bold;
-            font-size: 15px;
-            margin-bottom: 10px;
-        }
-
-        /* Nút 'Thêm vào giỏ' (OutlinedButton) */
-        .add-btn {
-            background-color: white;
-            color: #2196F3;
-            border: 1px solid #2196F3;
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 600;
-            font-size: 13px;
-            transition: background-color 0.2s;
-        }
-
-        .add-btn:hover {
-            background-color: #e3f2fd; /* Màu nền khi hover */
-        }
-
-        /* Footer đơn giản */
-        footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 12px;
-            color: #888;
-            border-top: 1px solid #eee;
-        }
+        /* Modal Giỏ hàng & Login */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        
+        /* Form Đăng nhập */
+        .form-group { margin-bottom: 15px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .primary-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <div style="width: 24px;"></div> <h1>XuBi</h1>
-            <div class="cart-icon">
-                <i class="fa-solid fa-shopping-bag"></i>
-                <span class="cart-badge">3</span> </div>
-        </header>
 
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="https://scontent.fsgn5-6.fna.fbcdn.net/v/t39.30808-6/632511979_3364849873667105_7250439103584063344_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=dd6889&_nc_ohc=rnCQosYKGqsQ7kNvwHOPVWo&_nc_oc=AdrspOn4lKrEe_FhLKh06HyCJOvH3OASfBMKh5_ug4wGJ1xTKJgd_yWdUBYCaunaWVY&_nc_zt=23&_nc_ht=scontent.fsgn5-6.fna&_nc_gid=Vtd9peQsBkd9UGMALf-GmA&oh=00_Af1GOwuUaOSFHy0sa9BS5fHnbe1hohtBDNXUTqYMuz5ACQ&oe=69F0B39F" alt="ĐỒ BỘ NGỦ">
-                <div class="product-info">
-                    <div>
-                        <div class="product-name">ĐỒ BỘ NGỦ ĐŨI BÔNG MÂY CAO CẤP</div>
-                        <div class="product-price">70.000đ</div>
-                    </div>
-                    <button class="add-btn" onclick="alert('Đã thêm vào giỏ!')">Thêm vào giỏ</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://scontent.fsgn5-6.fna.fbcdn.net/v/t39.30808-6/632487456_3364845303667562_1456560022038411141_n.jpg?stp=dst-jpg_s590x590_tt6&_nc_cat=111&ccb=1-7&_nc_sid=dd6889&_nc_ohc=ntlmUMR3u3IQ7kNvwFU3MAr&_nc_oc=AdqlPkEvXgv-Sl2hoZE3fVAAcggbvgbVNL4WTgqzLi5l6gQ8ItwpRy-oFGxZIHTu3js&_nc_zt=23&_nc_ht=scontent.fsgn5-6.fna&_nc_gid=6mHFso78Kxfs5mTwGYRO1Q&oh=00_Af3X_mMnx5IX36daVl1BgX1rH8UVA-VPE30OhDf-bYHy5g&oe=69F0A5D4" alt="ĐẦM LÔNG VŨ">
-                <div class="product-info">
-                    <div>
-                        <div class="product-name">ĐẦM LÔNG VŨ DÁNG DÀI</div>
-                        <div class="product-price">129.000đ</div>
-                    </div>
-                    <button class="add-btn" onclick="alert('Đã thêm vào giỏ!')">Thêm vào giỏ</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/631650255_3364842487001177_2960229819798019226_n.jpg?stp=dst-jpg_s590x590_tt6&_nc_cat=107&ccb=1-7&_nc_sid=dd6889&_nc_ohc=jFt7t84Fx30Q7kNvwEvPg-j&_nc_oc=AdrCeRF7kIzDH3YLTSyAx7nrvBM15d9f1Prwpp72VsFrhTSCjJOUc2O4VRRbqJ0q4ek&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=6mHFso78Kxfs5mTwGYRO1Q&oh=00_Af2EXlamHzS-AQ5ohB84S-KuMNnJCUFipGWIrj0ZLUFqNA&oe=69F0B3D6" alt="ĐẦM BABY DOLL">
-                <div class="product-info">
-                    <div>
-                        <div class="product-name">ĐẦM BABY DOLL</div>
-                        <div class="product-price">89.000đ</div>
-                    </div>
-                    <button class="add-btn" onclick="alert('Đã thêm vào giỏ!')">Thêm vào giỏ</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/634160415_3364839973668095_1686517506833750867_n.jpg?stp=dst-jpg_s590x590_tt6&_nc_cat=105&ccb=1-7&_nc_sid=dd6889&_nc_ohc=GYyuVF48AjwQ7kNvwG0aPtt&_nc_oc=AdrY60i2Bg3t1BillUBzavac8RxNsJGyuU2s5dhWl6n_TI8XvMgBuSdGWJcmN5F-UYM&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=iSzGtoqnK1x28QZ4rFQBsA&oh=00_Af22m93MFQBV9ZubKoAcVjSDU6BP0cX44OAbQd6TMSo7KQ&oe=69F09E0A" alt="ĐẦM BODY">
-                <div class="product-info">
-                    <div>
-                        <div class="product-name">ĐẦM BODY LEN CAO CẤP</div>
-                        <div class="product-price">105.000đ</div>
-                    </div>
-                    <button class="add-btn" onclick="alert('Đã thêm vào giỏ!')">Thêm vào giỏ</button>
-                </div>
-            </div>
+<div class="app-container">
+    <header>
+        <div class="auth-buttons">
+            <button onclick="openModal('loginModal')" id="userDisplay"><i class="fa-user fa"></i> Đăng nhập</button>
         </div>
+        <h2 style="margin:0; color: #333;">XuBi</h2>
+        <div style="position:relative; cursor:pointer" onclick="openModal('cartModal')">
+            <i class="fa-shopping-bag fa-2x" style="color:#555"></i>
+            <span id="cart-count" style="position:absolute; top:-5px; right:-10px; background:red; color:white; border-radius:50%; padding:2px 6px; font-size:12px">0</span>
+        </div>
+    </header>
 
-        <footer>
-            © 2024 XuBi Fashion Store. Giao diện giả lập từ Flutter.
-        </footer>
+    <div class="grid" id="product-list">
+        </div>
+</div>
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <h3>Đăng nhập / Đăng ký</h3>
+        <div class="form-group"><input type="email" id="email" placeholder="Email"></div>
+        <div class="form-group"><input type="password" id="password" placeholder="Mật khẩu"></div>
+        <button class="primary-btn" onclick="login()">Xác nhận</button>
+        <button onclick="closeModal('loginModal')" style="margin-top:10px; border:none; background:none; width:100%">Đóng</button>
     </div>
+</div>
+
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <h3>Giỏ hàng của bạn</h3>
+        <div id="cart-items"></div>
+        <hr>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; margin: 15px 0;">
+            <span>Tổng cộng:</span>
+            <span id="total-price">0đ</span>
+        </div>
+        <button class="primary-btn" onclick="checkout()">Thanh toán ngay</button>
+        <button onclick="closeModal('cartModal')" style="margin-top:10px; border:none; background:none; width:100%">Tiếp tục mua sắm</button>
+    </div>
+</div>
+
+<script>
+    const products = [
+        { id: 1, name: "Đồ bộ ngủ đũi bông mây", price: 70000, img: "https://via.placeholder.com/150" },
+        { id: 2, name: "Đầm lông vũ dáng dài", price: 129000, img: "https://via.placeholder.com/150" },
+        { id: 3, name: "Đầm Baby Doll", price: 89000, img: "https://via.placeholder.com/150" },
+        { id: 4, name: "Đầm Body len cao cấp", price: 105000, img: "https://via.placeholder.com/150" }
+    ];
+
+    let cart = JSON.parse(localStorage.getItem('xubi_cart')) || [];
+
+    // Hiển thị sản phẩm
+    function renderProducts() {
+        const html = products.map(p => `
+            <div class="card">
+                <img src="${p.img}">
+                <div class="info">
+                    <div style="font-size:14px; height:40px">${p.name}</div>
+                    <div class="price">${p.price.toLocaleString()}đ</div>
+                    <button class="add-btn" onclick="addToCart(${p.id})">Thêm</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('product-list').innerHTML = html;
+    }
+
+    function addToCart(id) {
+        const item = products.find(p => p.id === id);
+        cart.push(item);
+        updateCart();
+    }
+
+    function updateCart() {
+        localStorage.setItem('xubi_cart', JSON.stringify(cart));
+        document.getElementById('cart-count').innerText = cart.length;
+        renderCart();
+    }
+
+    function renderCart() {
+        const cartDiv = document.getElementById('cart-items');
+        if (cart.length === 0) {
+            cartDiv.innerHTML = "<p>Giỏ hàng trống</p>";
+            return;
+        }
+        cartDiv.innerHTML = cart.map((item, index) => `
+            <div class="cart-item">
+                <span>${item.name}</span>
+                <span>${item.price.toLocaleString()}đ <i class="fa fa-trash" onclick="removeItem(${index})" style="color:red; cursor:pointer"></i></span>
+            </div>
+        `).join('');
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('total-price').innerText = total.toLocaleString() + 'đ';
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    function login() {
+        const email = document.getElementById('email').value;
+        if(email) {
+            localStorage.setItem('user', email);
+            document.getElementById('userDisplay').innerHTML = `<i class="fa fa-user"></i> Chào, ${email.split('@')[0]}`;
+            closeModal('loginModal');
+        }
+    }
+
+    function checkout() {
+        if(!localStorage.getItem('user')) {
+            alert("Vui lòng đăng nhập để thanh toán!");
+            openModal('loginModal');
+            return;
+        }
+        alert("Cảm ơn bạn đã mua hàng! Đơn hàng đang được xử lý.");
+        cart = [];
+        updateCart();
+        closeModal('cartModal');
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Khởi tạo
+    renderProducts();
+    updateCart();
+</script>
+
 </body>
 </html>
